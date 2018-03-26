@@ -3,6 +3,10 @@
     <div class="header">
       <heading></heading>
     </div>
+    <div class="banner">
+      <div class="banner-desc"></div>
+      <register></register>
+    </div>
     <div class="body">
       <div class="bodytitle">
         <div class="qtitle">
@@ -37,25 +41,34 @@
 <script>
 import Heading from '@/components/Heading'
 import PostQuestion from '@/components/PostQuestion'
+import Register from '@/components/Register'
 
 export default {
   name: 'Main',
   components: {
     Heading: Heading,
-    PostQuestion: PostQuestion
+    PostQuestion: PostQuestion,
+    Register: Register
   },
   methods: {
     showmodal: function () {
       let modal = document.getElementById('postquestion')
       modal.style.display = 'block'
-    },
-    closemodal: function () {
     }
   }
 }
 </script>
 
 <style>
+.banner {
+  display: grid;
+  grid-template-columns: 2fr 3fr;
+  background-color:rgb(19,95,240);
+  background-image: url('../assets/fibonnaci.png');
+  background-size: 550px;
+  background-position: 5px 2px;
+  background-repeat: no-repeat;
+}
 .body {
   margin-top: 4em;
 }
@@ -76,6 +89,11 @@ export default {
 }
 
 @media all and (max-width: 600px){
+  .banner {
+    grid-template-columns: auto;
+    /* height: 50vw; */
+  }
+
   .bodytitle {
     grid-template-columns: auto;
     margin-left: auto;

@@ -83,6 +83,9 @@ input {
   transition: all 0.3s;
   border-bottom: 2px solid #bebed2;
 }
+input::-webkit-input-placeholder{
+  font-size: 20px
+}
 input:focus {
   border-bottom: 2px solid #78788c;
 }

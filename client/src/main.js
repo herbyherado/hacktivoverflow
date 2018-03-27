@@ -3,7 +3,15 @@
 import Vue from 'vue'
 import App from './App'
 import router from './router'
+import axios from 'axios'
 
+let host = 'http://localhost:3000'
+if (document.location.hostname !== 'localhost') {
+  host = 'http://hacktivoverflow.herbyherado.com'
+}
+Vue.prototype.$http = axios.create({
+  baseURL: host
+})
 Vue.config.productionTip = false
 
 /* eslint-disable no-new */

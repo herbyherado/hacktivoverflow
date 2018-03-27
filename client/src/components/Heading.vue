@@ -4,16 +4,19 @@
     <div class="logo">
       <router-link to="/"><img src="@/assets/sologoedit.png" alt="" class="s" style="height:30px;"></router-link>
     </div>
-    <div class="items" style="margin-top:auto; margin-bottom:auto;">&zwnj;My Questions</div>
+    <div class="items" v-if="!checkToken" style="margin-top:auto; margin-bottom:auto;">&zwnj;</div>
+    <div class="items" v-else style="margin-top:auto; margin-bottom:auto;"><router-link to='/myquestions'> My Questions</router-link></div>
     <div class="login">
-      <button v-if="!checkToken" class="rad-button wwt flat" id="rad-button">Log In</button>
-      <button v-else class="rad-button danger flat" id="rad-button">Sign Out</button>
+      <button v-if="!checkToken" @click='openlogin()' class="rad-button wwt flat" id="rad-button">Log In</button>
+      <button v-else @click='logouts' class="rad-button danger flat" id="rad-button">Sign Out</button>
     </div>
   </div>
+  <login></login>
 </div>
 </template>
 
 <script>
+import Login from '@/components/Login'
 export default {
   name: 'Heading',
   data () {
@@ -21,9 +24,27 @@ export default {
       hasToken: null
     }
   },
+  components: {
+    Login: Login
+  },
+  methods: {
+    openlogin: function () {
+      let modal = document.getElementsByClassName('loginWrapper')[0]
+      modal.style.display = 'block'
+    },
+    closeModal: function () {
+      let modal = document.getElementsByClassName('loginWrapper')[0]
+      modal.style.display = 'none'
+    }
+  },
   computed: {
     checkToken: function () {
       return this.hasToken
+    },
+    logouts: function () {
+      console.log('hello')
+      localStorage.clear()
+      this.$router.push('/')
     }
   },
   created () {

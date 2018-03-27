@@ -3,6 +3,7 @@ import Router from 'vue-router'
 import Hello from '@/components/Hello'
 import Main from '@/components/Main'
 import Post from '@/components/Post'
+import MyQuestions from '@/components/MyQuestions'
 import VeeValidate from 'vee-validate'
 
 Vue.use(VeeValidate)
@@ -16,9 +17,22 @@ export default new Router({
       component: Main
     },
     {
-      path: '/post',
+      path: '/post/:id',
       name: 'Post',
       component: Post
+    },
+    {
+      path: '/myquestions',
+      name: 'MyQuestions',
+      component: MyQuestions,
+      beforeEnter: (to, from, next) => {
+        const status = localStorage.token
+        if (status === undefined) {
+          next('/')
+        } else {
+          next()
+        }
+      }
     },
     {
       path: '/hello',

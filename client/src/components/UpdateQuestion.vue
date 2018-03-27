@@ -1,52 +1,49 @@
 <template>
-  <div class="modal" id="postquestion">
+  <div class="modal" :id="'updatequestion' + index">
     <div class="form">
-      <h2>Post Question</h2><span style="float:right;cursor:pointer;margin-top:-3em;" @click='closemodal'>&times;</span>
+      <h2>Update Question</h2><span style="float:right;cursor:pointer;margin-top:-3em;" @click='closemodal(index)'>&times;</span>
       <p type="Title">
-        <input v-validate="'required'" name="title" id="input-title" v-model='title' placeholder="Write your question title...">
-        <span style="color:red;font-size:10px;" v-show="errors.has('title')" class="help is-danger">{{ errors.first('title') }}</span>
+        <input v-validate="'required'" name="update-title" :id="'update-title' + index" :value='question.title'>
+        <span style="color:red;font-size:10px;" v-show="errors.has('update-title')" class="help is-danger">{{ errors.first('update-title') }}</span>
       </p>
       <p type="Description">
-        <textarea v-validate="'required'" name="description" id="input-description" v-model='description' placeholder="Enter your description here.."></textarea>
-        <span style="color:red;font-size:10px;" v-show="errors.has('description')" class="help is-danger">{{ errors.first('description') }}</span>
+        <textarea v-validate="'required'" name="update-description" :id="'update-description' + index" :value='question.description'></textarea>
+        <span style="color:red;font-size:10px;" v-show="errors.has('update-description')" class="help is-danger">{{ errors.first('update-description') }}</span>
       </p>
       <div class="buttons">
-        <button @click='closemodal' class="rad-button warning flat" id ="rad-button">Cancel</button>
-        <button @click='postquestion' class="rad-button good flat" id="rad-button"> Post</button>
+        <button @click='closemodal(index)' class="rad-button warning flat" id ="rad-button">Cancel</button>
+        <button @click='updatequestion(question._id, index)' class="rad-button good flat" id="rad-button">Update</button>
       </div>
     </div>
+    {{question}}
   </div>
 </template>
 
 <script>
 import swal from 'sweetalert2'
 export default {
-  name: 'PostQuestion',
-  data () {
-    return {
-      title: '',
-      description: ''
-    }
-  },
+  name: 'UpdateQuestion',
+  props: ['question', 'index'],
   methods: {
-    closemodal: function () {
-      let modal = document.getElementById('postquestion')
+    closemodal: function (index) {
+      let modal = document.getElementById('updatequestion' + index)
       modal.style.display = 'none'
     },
-    postquestion: function () {
+    updatequestion: function (id, index) {
       let token = localStorage.getItem('token')
+      let title = document.getElementById('update-title' + index).value
+      let description = document.getElementById('update-description' + index).value
       this.$validator.validateAll().then(val => {
         if (val) {
-          this.$http.post('/questions', {
-            title: this.title,
-            description: this.description
+          this.$http.put(`/questions/${id}`, {
+            title: title,
+            description: description
           }, {
             headers: { token }
           })
             .then(post => {
-              this.closemodal()
               swal({
-                title: 'Question Posted!',
+                title: 'Question Updated!',
                 text: 'Please check again in a bit for response',
                 type: 'success',
                 showConfirmButton: true
@@ -139,10 +136,9 @@ p:before {
 .buttons > button {
   margin: 10px 60px;
 }
-#input-description {
+textarea {
   margin-top: 20px;
 	width:100%;
-  height:5vw;
 	overflow:hidden;
 	background-color:#FFF;
 	color:#222;
@@ -150,7 +146,7 @@ p:before {
 	font-weight:normal;
 	font-size:12px;
 	resize:none;
-	line-height:15px;
+	line-height:40px;
   padding: 2px 10px;
 }
 button:hover {
@@ -172,63 +168,5 @@ button:hover {
 }
 span {
   margin: 0 5px 0 15px;
-}
-
-@media all and (max-width: 700px){
-  .modal {
-  display: none; /* Hidden by default */
-  position: fixed; /* Stay in place */
-  z-index: 1; /* Sit on top */
-  left: 0;
-  top: 0;
-  width: 100%; /* Full width */
-  height: 100%; /* Full height */
-  overflow: scroll; /*Enable scroll if needed */
-  background-color: rgb(0,0,0); /* Fallback color */
-  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
-}
-
-.form {
-  width: 90%;
-  height: 100%;
-  background: #e6e6e6;
-  border-radius: 8px;
-  /* box-shadow: 0 0 40px -10px #000; */
-  margin: 5% auto;
-  padding: 5px 10px;
-  max-width: calc(100vw - 40px);
-  box-sizing: border-box;
-  font-family: "Montserrat", sans-serif;
-  position: relative;
-}
-  input::-webkit-input-placeholder{
-    font-size: 10px
-  }
-  #input-description{
-  margin-top: 10px;
-	width:90%;
-  height:5vw;
-	font-size:12px;
-	resize:none;
-	line-height:6px;
-  padding: 2px 6px;
-  }
-  p {
-  text-align: left;
-  padding: 0 5px;
-}
-p:before {
-  content: attr(type);
-  display: block;
-  margin: 7px 0 0;
-  font-size: 12px;
-  color: #5a5a5a;
-}
-h2 {
-  font-size: 16px;
-}
-textarea {
-  height: 30px;
-}
 }
 </style>

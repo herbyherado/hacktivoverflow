@@ -3,7 +3,7 @@
       <div class="reg-title">
         Register Now
       </div>
-      <form action="">
+      <div>
         <span class="form-label">
           <input type="text" v-model='username' v-validate="'required'" minlength="5" name="username"/>
           <span style="color:white;font-size:15px;" v-show="errors.has('username')" class="help is-danger">{{ errors.first('username') }}</span>
@@ -18,13 +18,15 @@
           <input v-validate="'required'" type="password" v-model='password' name="password"/>
           <span style="color:white;font-size:15px;" v-show="errors.has('password')" class="help is-danger">{{ errors.first('password') }}</span>
           <label for="password">Password</label>
-          <button class="rad-button wwt flat register" id="rad-button">Register</button>
+          <button @click='register' class="rad-button wwt flat register" id="rad-button">Register</button>
         </span>
-      </form>
+      </div>
     </div>
 </template>
 
 <script>
+import swal from 'sweetalert2'
+
 export default {
   name: 'Register',
   data () {
@@ -32,6 +34,40 @@ export default {
       username: '',
       email: '',
       password: ''
+    }
+  },
+  methods: {
+    register: function () {
+      this.$validator.validateAll().then(val => {
+        if (val) {
+          this.$http.post('/users', {
+            username: this.username,
+            email: this.email,
+            password: this.password
+          })
+            .then(res => {
+              console.log(res)
+              this.username = ' '
+              this.email = ' '
+              this.password = ' '
+              localStorage.setItem('token', res.data.token)
+            })
+            .catch(err => {
+              console.log('unable to create user')
+              console.log(err)
+              this.username = ' '
+              this.email = ' '
+              this.password = ' '
+              swal({
+                type: 'error',
+                title: 'Oops...',
+                text: 'Your username has been taken!'
+              })
+            })
+        } else {
+          console.log('unable to validate')
+        }
+      })
     }
   }
 }

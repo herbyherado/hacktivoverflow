@@ -20,17 +20,20 @@
         </div>
       </div>
       <!--  -->
-      <div class="board">
+      <div class="board" v-for='(question, i) in showQuestions' :key='i'>
         <div class="question">
           <div class="votes">
-            <div class="total">1</div>
+            <!-- <div class="total">{{ question }}</div> -->
+            <div class="total">{{ question.upvote.length - question.downvote.length }}</div>
             <div class="desc">votes</div>
           </div>
           <div class="answer">
-            <div class="total">1</div>
+            <div class="total">{{ question.answer.length }}</div>
             <div class="desc">answer</div>
             </div>
-          <div class="questiontitle">hello dunia ini bukan asdklfj alskdfj a;lksjf kal;sdjf l;kasdjf akl;s</div>
+        <router-link :to="{ name: 'Post', params: { id: question._id }}">
+          <div class="questiontitle" :title='question._id'>{{ question.title }}</div>
+        </router-link>
         </div>
       </div>
       <!--  -->
@@ -39,12 +42,27 @@
 </template>
 
 <script>
+import swal from 'sweetalert2'
 import Heading from '@/components/Heading'
 import PostQuestion from '@/components/PostQuestion'
 import Register from '@/components/Register'
 
 export default {
   name: 'Main',
+  data () {
+    return {
+      signinUsername: '',
+      signinPassword: '',
+      questionTitle: '',
+      questionDesc: '',
+      questions: []
+    }
+  },
+  computed: {
+    showQuestions: function () {
+      return this.questions
+    }
+  },
   components: {
     Heading: Heading,
     PostQuestion: PostQuestion,
@@ -54,12 +72,77 @@ export default {
     showmodal: function () {
       let modal = document.getElementById('postquestion')
       modal.style.display = 'block'
+    },
+    login: function () {
+      this.$http.post('/users/login', {
+        username: this.signinUsername,
+        password: this.signinPassword
+      })
+        .then(response => {
+          console.log(response)
+          localStorage.setItem('token', response.token)
+          // close sign in modal
+        })
+        .catch(err => {
+          console.log(err)
+          // show pop up with sweet alert
+          swal({
+            type: 'error',
+            title: 'Oops...',
+            text: 'Please check again your username/password credentials!'
+          })
+        })
+    },
+    postQuestion: function () {
+      let token = localStorage.getItem('token')
+      this.$http.post('/questions/post', {
+        title: this.questionTitle,
+        description: this.questionDesc
+      }, {
+        headers: token
+      })
+        .then(response => {
+        // sweet alert: question posted
+          this.questionTitle = ''
+          this.questionDesc = ''
+          swal({
+            title: 'Question Posted!',
+            text: 'Please check again in a bit for response',
+            type: 'success'
+          })
+        })
+        .catch(err => {
+          console.log(err)
+          this.questionTitle = ''
+          this.questionDesc = ''
+        // sweet alert: make sure to sign in first before posting
+        })
     }
+  },
+  created () {
+    this.$http.get('/questions')
+      .then(response => {
+        console.log(response)
+        this.questions.push(...response.data.response)
+      })
+      .catch(error => {
+        console.log(error)
+      })
   }
 }
 </script>
 
 <style>
+a {
+  color: black
+}
+a:link {
+  color:black;
+  text-decoration: none;
+}
+a:visited {
+  color:black
+}
 .banner {
   display: grid;
   grid-template-columns: 2fr 3fr;
@@ -71,6 +154,7 @@ export default {
 }
 .body {
   margin-top: 4em;
+  margin-bottom: 4em;
 }
 .bodytitle {
   text-align: center;

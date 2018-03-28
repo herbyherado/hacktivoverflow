@@ -7,11 +7,11 @@
       </div>
       <div class="post-desc">
         <div class="q-vote">
-          <div class="q-upvote">
+          <div class="q-upvote" @click='upQues(showThread._id)'>
             <img src="../assets/arrow.png" alt="" class="sr">
           </div>
           <div class="q-total"> {{ showThread.upvote.length - showThread.downvote.length }} </div>
-          <div class="q-downvote">
+          <div class="q-downvote" @click='downQues(showThread._id)'>
             <img src="../assets/arrow.png" alt="" class="sr" style="transform:rotate(180deg);">
           </div>
         </div>
@@ -22,11 +22,11 @@
       </div>
       <div class="post-answer" v-for="(ans, i) in showThread.answer" :key='i'>
         <div class="a-vote">
-          <div class="a-upvote" @click='upAns(ans._id, user)'>
+          <div class="a-upvote" @click='upAns(ans._id)'>
             <img src="../assets/arrow.png" alt="" class="sr">
           </div>
-          <div class="a-total"> 0 </div>
-          <div class="a-downvote" @click='downAns(ans._id, user)'>
+          <div class="a-total">{{ ans.upvote.length - ans.downvote.length }} </div>
+          <div class="a-downvote" @click='downAns(ans._id)'>
             <img src="../assets/arrow.png" alt="" class="sr" style="transform:rotate(180deg);">
           </div>
         </div>
@@ -124,13 +124,50 @@ export default {
         })
       // console.log(id)
     },
-    upAns (ansId, userId) {
-      this.$http.post('/answers/upvote', {
-        ansId: ansId,
-        userId: userId
-      })
+    upAns: function (ansId) {
+      console.log(ansId, this.user)
+      this.$http.get(`/answers/${ansId}/upvote/${this.user}`)
+        .then(res => {
+          console.log(res)
+          window.location.reload()
+        })
+        .catch(err => {
+          console.log(err)
+        })
+    },
+    downAns: function (ansId) {
+      console.log(ansId, this.user)
+      this.$http.get(`/answers/${ansId}/downvote/${this.user}`)
+        .then(res => {
+          console.log(res)
+          window.location.reload()
+        })
+        .catch(err => {
+          console.log(err)
+        })
+    },
+    upQues: function (quesId) {
+      console.log(quesId)
+      this.$http.get(`/questions/${quesId}/upvote/${this.user}`)
+        .then(res => {
+          console.log(res)
+          window.location.reload()
+        })
+        .catch(err => {
+          console.log(err)
+        })
+    },
+    downQues: function (quesId) {
+      console.log(quesId)
+      this.$http.get(`/questions/${quesId}/downvote/${this.user}`)
+        .then(res => {
+          console.log(res)
+          window.location.reload()
+        })
+        .catch(err => {
+          console.log(err)
+        })
     }
-
   },
   computed: {
     showThread: function () {

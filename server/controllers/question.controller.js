@@ -1,5 +1,6 @@
 const Question = require('../models/question.model')
 const jwt = require('jsonwebtoken')
+const mongoose = require('mongoose')
 
 module.exports = {
   getAll: function (req, res) {
@@ -112,6 +113,82 @@ module.exports = {
           message: 'unable to update question',
           err
         })
+      })
+  },
+  upvote: function (req, res) {
+    Question.findOne({ _id: req.params.ques})
+      .exec()
+      .then(question => {
+        if (question.user == req.params.user) {
+          res.status(200).json({
+            message: 'user cannot vote their own question',
+          })
+        } else {
+          let upIndex = question.upvote.indexOf(req.params.user)
+          let downIndex = question.downvote.indexOf(req.params.user)
+          if (downIndex !== -1) {
+            question.downvote.splice(downIndex, 1)
+            question.save()
+            res.status(200).json({
+              message: 'downvote removed'
+            })
+          } else {
+            if (upIndex === -1) {
+              question.upvote.push(req.params.user)
+              question.save()
+              res.status(200).json({
+                message: 'Upvote successful'
+              })
+            } else if (upIndex !== -1) {
+              question.upvote.splice(upIndex, 1)
+              question.save()
+              res.status(200).json({
+                message: 'user removed downvote'
+              })
+            }
+          }
+        }
+      })
+      .catch(err => {
+        res.send(err)
+      })
+  },
+  downvote: function (req, res) {
+    Question.findOne({ _id: req.params.ques})
+      .exec()
+      .then(question => {
+        if (question.user == req.params.user) {
+          res.status(200).json({
+            message: 'user cannot vote their own question',
+          })
+        } else {
+          let upIndex = question.upvote.indexOf(req.params.user)
+          let downIndex = question.downvote.indexOf(req.params.user)
+          if (upIndex !== -1) {
+            question.upvote.splice(upIndex, 1)
+            question.save()
+            res.status(200).json({
+              message: 'upvote removed'
+            })
+          } else {
+            if (downIndex === -1) {
+              question.downvote.push(req.params.user)
+              question.save()
+              res.status(200).json({
+                message: 'downvote successful'
+              })
+            } else if (downIndex !== -1) {
+              question.downvote.splice(downIndex, 1)
+              question.save()
+              res.status(200).json({
+                message: 'user removed downvote'
+              })
+            }
+          }
+        }
+      })
+      .catch(err => {
+        res.send(err)
       })
   }
 }

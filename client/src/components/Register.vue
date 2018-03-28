@@ -66,6 +66,14 @@ export default {
             })
         } else {
           console.log('unable to validate')
+          this.username = ''
+          this.email = ''
+          this.password = ''
+          swal({
+            type: 'error',
+            title: 'Oops...',
+            text: 'Failed to register'
+          })
         }
       })
     }

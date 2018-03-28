@@ -68,31 +68,69 @@ module.exports = {
       })
   },
   upvote: function (req, res) {
-    // find in downvote
-    Answer.findOne({ _id: req.body.ansId, downvote: mongoose.Types.ObjectId(req.body.userId)})
+    console.log(req.params)
+    Answer.findOne({ _id: req.params.ans})
       .exec()
-      .then(val => {
-        // if has value then remove
-        val.remove()
-        // then find in upvote
-        Answer.findOne({ _id: req.body.ansId, upvote: mongoose.Types.ObjectId(req.body.userId)})
-          .exec()
-          // if has value then do nothing
-          .then(upv => {
-
+      .then(answer => {
+        console.log(answer)
+        let upIndex = answer.upvote.indexOf(req.params.user)
+        let downIndex = answer.downvote.indexOf(req.params.user)
+        if (downIndex !== -1) {
+          answer.downvote.splice(downIndex, 1)
+          answer.save()
+          res.status(200).json({
+            message: 'downvote removed'
           })
-          .catch(error => {
-            // if does not have value, then add
-            console.log(error)
-          })
+        } else {
+          if (upIndex === -1) {
+            answer.upvote.push(req.params.user)
+            answer.save()
+            res.status(200).json({
+              message: 'Upvote successful'
+            })
+          } else if (upIndex !== -1) {
+            answer.upvote.splice(upIndex, 1)
+            answer.save()
+            res.status(200).json({
+              message: 'User removed upvote'
+            })
+          }
+        }
       })
       .catch(err => {
-        // else check in upvote
-        Answer.findOne({ _id: req.body.ansId, upvote: mongoose.Types.ObjectId(req.body.userId)})
-        console.log(err)
+        res.send(err)
       })
   },
   downvote: function (req, res) {
-
+    Answer.findOne({ _id: req.params.ans})
+      .exec()
+      .then(answer => {
+        let upIndex = answer.upvote.indexOf(req.params.user)
+        let downIndex = answer.downvote.indexOf(req.params.user)
+        if (upIndex !== -1) {
+          answer.upvote.splice(upIndex, 1)
+          answer.save()
+          res.status(200).json({
+            message: 'upvote removed'
+          })
+        } else {
+          if (downIndex === -1) {
+            answer.downvote.push(req.params.user)
+            answer.save()
+            res.status(200).json({
+              message: 'downvote successful'
+            })
+          } else if (downIndex !== -1) {
+            answer.downvote.splice(downIndex, 1)
+            answer.save()
+            res.status(200).json({
+              message: 'User removed downvote'
+            })
+          }
+        }
+      })
+      .catch(err => {
+        res.send(err)
+      })
   }
 }

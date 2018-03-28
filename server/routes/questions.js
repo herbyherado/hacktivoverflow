@@ -9,5 +9,7 @@ questions.get('/:id', questionController.getById)
 questions.post('/myquestions', questionController.getQuestionByUserId)
 questions.delete('/:id', questionController.deleteQuestion)
 questions.put('/:id', questionController.updateQuestion)
+questions.get('/:ques/upvote/:user', questionController.upvote)
+questions.get('/:ques/downvote/:user', questionController.downvote)
 
 module.exports = questions

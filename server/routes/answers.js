@@ -6,6 +6,6 @@ const { authenticate } = require('../middleware/auth')
 answers.post('/:id', authenticate, answerController.create)
 answers.get('/', answerController.getAll)
 answers.delete('/:id', answerController.remove)
-answers.post('/upvote', answerController.upvote)
-answers.post('/downvote', answerController.downvote)
+answers.get('/:ans/upvote/:user', answerController.upvote)
+answers.get('/:ans/downvote/:user', answerController.downvote)
 module.exports = answers

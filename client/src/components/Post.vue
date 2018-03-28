@@ -243,10 +243,12 @@ export default {
 	font-weight:normal;
 	font-size:12px;
 	resize:none;
-	line-height:60px;
+	line-height:20px;
+  height: 20vw;
   padding: 2px 10px;
   border: 0.5px solid silver;
   border-radius: 5px 5px 5px 5px;
+  resize: vertical;
 }
 /* button */
 

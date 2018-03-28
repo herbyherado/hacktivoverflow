@@ -52,7 +52,12 @@ export default {
           console.log(response)
           localStorage.setItem('token', response.data.token)
           this.closeModal()
-          window.location.reload()
+          swal({
+            type: 'success',
+            text: 'You are now logged in'
+          }).then((next) => {
+            window.location.reload()
+          })
         })
         .catch(err => {
           console.log(err)

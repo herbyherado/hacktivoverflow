@@ -73,26 +73,6 @@ export default {
       let modal = document.getElementById('postquestion')
       modal.style.display = 'block'
     },
-    login: function () {
-      this.$http.post('/users/login', {
-        username: this.signinUsername,
-        password: this.signinPassword
-      })
-        .then(response => {
-          console.log(response)
-          localStorage.setItem('token', response.token)
-          // close sign in modal
-        })
-        .catch(err => {
-          console.log(err)
-          // show pop up with sweet alert
-          swal({
-            type: 'error',
-            title: 'Oops...',
-            text: 'Please check again your username/password credentials!'
-          })
-        })
-    },
     postQuestion: function () {
       let token = localStorage.getItem('token')
       this.$http.post('/questions/post', {

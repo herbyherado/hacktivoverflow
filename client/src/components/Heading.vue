@@ -8,7 +8,7 @@
     <div class="items" v-else style="margin-top:auto; margin-bottom:auto;"><router-link to='/myquestions'> My Questions</router-link></div>
     <div class="login">
       <button v-if="!checkToken" @click='openlogin()' class="rad-button wwt flat" id="rad-button">Log In</button>
-      <button v-else @click='logouts' class="rad-button danger flat" id="rad-button">Sign Out</button>
+      <button v-else @click='logouts()' class="rad-button danger flat" id="rad-button">Sign Out</button>
     </div>
   </div>
   <login></login>
@@ -16,6 +16,7 @@
 </template>
 
 <script>
+import swal from 'sweetalert2'
 import Login from '@/components/Login'
 export default {
   name: 'Heading',
@@ -42,9 +43,14 @@ export default {
       return this.hasToken
     },
     logouts: function () {
-      console.log('hello')
       localStorage.clear()
-      this.$router.push('/')
+      swal({
+        type: 'success',
+        text: 'You are now signed out'
+      }).then((next) => {
+        window.location.reload()
+        this.$router.push('/')
+      })
     }
   },
   created () {
@@ -76,5 +82,12 @@ export default {
   text-align: center;
   padding: 20px;
   border-bottom: 0.5px solid lightgrey;
+}
+
+@media all and (max-width: 600px){
+  .header {
+    grid-template-columns: auto;
+    grid-row-gap: 20px;
+  }
 }
 </style>
